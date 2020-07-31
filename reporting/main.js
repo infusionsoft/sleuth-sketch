@@ -122,10 +122,10 @@ function report(){
             const filePath = join(projectPath, filename);
             const tidyFileName = filename.replace(/\s*\(.*\)\s*|\.sketch/g, '');
 
-            promises.push(analyzeSketch(filePath)
+            promises.push(analyzeSketch({filePath: filePath, projectName: projectName, fileName: tidyFileName})
                 .then(counts => {
                     projectResult[tidyFileName] = counts;
-                    console.log(counts, tidyFileName);
+                    console.log(projectName + " > " + tidyFileName, counts);
                 })
                 .catch(error => {
                     console.log('error', error);
@@ -138,13 +138,70 @@ function report(){
         const endTime = Date.now();
         const elapsed = endTime - startTime;
 
+        // Let's do a bit of post processing to link our symbol ID's together.
+
+        // Merge all the symbols and styles together into one object.
+        var allSymbols = {};
+        var allTextStyles = {};
+        var allLayerStyles = {};
+
+        for (project in result.projects) {
+            const thisProject = result.projects[project];
+
+            for (file in thisProject) {
+                const thisFile = thisProject[file];
+                allSymbols = Object.assign(allSymbols, thisFile.shareables.symbols);
+                allTextStyles = Object.assign(allTextStyles, thisFile.shareables.textStyles);
+                allLayerStyles = Object.assign(allLayerStyles, thisFile.shareables.layerStyles);
+            }
+        }
+        result.allSymbols = allSymbols;
+        result.allTextStyles = allTextStyles;
+        result.allLayerStyles = allLayerStyles;
+
+        // Now let's count the instances of symbols and distribute those counts around where they make sense.
+        for (project in result.projects) {
+            const thisProject = result.projects[project];
+
+            for (file in thisProject) {
+                const thisFile = thisProject[file];
+                for (symbol in thisFile.counts.externalSymbols) {
+                    symbolCount = thisFile.counts.externalSymbols[symbol];
+                    if (typeof result.allSymbols[symbol].count !== "undefined")
+                    {
+                        result.allSymbols[symbol].count += symbolCount;
+                    } else {
+                        result.allSymbols[symbol].count = symbolCount;
+                    }
+                }
+                for (style in thisFile.counts.externalTextStyles) {
+                    styleCount = thisFile.counts.externalTextStyles[style];
+                    if (typeof result.allTextStyles[style].count !== "undefined")
+                    {
+                        result.allTextStyles[style].count += styleCount;
+                    } else {
+                        result.allTextStyles[style].count = styleCount;
+                    }
+                }
+                for (style in thisFile.counts.externalLayerStyles) {
+                    styleCount = thisFile.counts.externalLayerStyles[style];
+                    if (typeof result.allLayerStyles[style].count !== "undefined")
+                    {
+                        result.allLayerStyles[style].count += styleCount;
+                    } else {
+                        result.allLayerStyles[style].count = styleCount;
+                    }
+                }
+            }
+        }
+
         fs.writeFileSync(
             `${RESULT_SAVE_DIRECTORY}/${endTime}.json`,
             JSON.stringify(result, null, 4)
         );
 
         console.log(`It took ${elapsed / 1000} seconds to finish.`);
-        console.log(`You should run "yarn dev" or "yarn build" to see your report.`);
+        console.log(`You should run "npm run dev" or "npm run build" to see your report.`);
     }).catch(error => {
         console.log('Error writing report to file', error);
     });
