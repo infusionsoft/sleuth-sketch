@@ -190,9 +190,14 @@ export default {
                                 ...project[filename],
                                 coverage: 0,
                             };
-
-                            if (result.layers > 0) {
-                                result.coverage = (result.layersReferencingExternalSymbols + result.layersReferencingExternalLayerStyles + result.layersReferencingExternalTextStyles) / result.layers;
+                            if (typeof result.counts === "undefined") // For legacy reports
+                            {
+                                result.counts = {
+                                    ...project[filename]
+                                }
+                            }
+                            if (result.counts.layers > 0) {
+                                result.coverage = (result.counts.layersReferencingExternalSymbols + result.counts.layersReferencingExternalLayerStyles + result.counts.layersReferencingExternalTextStyles) / result.counts.layers;
                                 result.coverage = parseFloat((result.coverage * 100).toFixed(1));
                             }
 
@@ -211,11 +216,11 @@ export default {
                         projectRow.layersReferencingExternalAny = 0;
 
                         fileData.forEach(file => {
-                            projectRow.layerCount += file.layers;
-                            projectRow.layersReferencingExternalSymbols += file.layersReferencingExternalSymbols;
-                            projectRow.layersReferencingExternalLayerStyles += file.layersReferencingExternalLayerStyles;
-                            projectRow.layersReferencingExternalTextStyles += file.layersReferencingExternalTextStyles;
-                            projectRow.layersReferencingExternalAny += file.layersReferencingExternalTextStyles + file.layersReferencingExternalLayerStyles + file.layersReferencingExternalSymbols;
+                            projectRow.layerCount += file.counts.layers;
+                            projectRow.layersReferencingExternalSymbols += file.counts.layersReferencingExternalSymbols;
+                            projectRow.layersReferencingExternalLayerStyles += file.counts.layersReferencingExternalLayerStyles;
+                            projectRow.layersReferencingExternalTextStyles += file.counts.layersReferencingExternalTextStyles;
+                            projectRow.layersReferencingExternalAny += file.counts.layersReferencingExternalTextStyles + file.counts.layersReferencingExternalLayerStyles + file.counts.layersReferencingExternalSymbols;
                         });
 
                         if (projectRow.layerCount > 0) {

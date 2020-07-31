@@ -1,0 +1,191 @@
+{
+    "timestamp": 1596158255553,
+    "projects": {
+        "File One 🦄 ": {
+            "Sketch File": {
+                "counts": {
+                    "layers": 34,
+                    "layersReferencingExternalSymbols": 8,
+                    "layersReferencingExternalLayerStyles": 4,
+                    "layersReferencingExternalTextStyles": 3,
+                    "externalSymbols": {
+                        "5FB584F9-4E82-49B5-A035-678B5A6136E6": 4,
+                        "E9264408-903B-415C-B31B-3026550042C6": 4
+                    },
+                    "externalTextStyles": {
+                        "6A65DC88-74B9-48D3-9714-65A7289D4262": 1
+                    },
+                    "externalLayerStyles": {
+                        "205CDB5E-99FF-46EF-A76F-D72BF325D8B8": 2,
+                        "76BB71DD-0D72-43D0-884C-F24451249079": 2
+                    }
+                },
+                "shareables": {
+                    "symbols": {
+                        "CAC60635-F34A-4857-BE76-797E3D9C1675": {
+                            "name": "Local Circle",
+                            "id": "CAC60635-F34A-4857-BE76-797E3D9C1675",
+                            "sourceProject": "File One 🦄 ",
+                            "sourceFile": "Sketch File"
+                        },
+                        "3083BA43-2C97-4C33-B07B-52F7B0DE6C93": {
+                            "name": "Local Square",
+                            "id": "3083BA43-2C97-4C33-B07B-52F7B0DE6C93",
+                            "sourceProject": "File One 🦄 ",
+                            "sourceFile": "Sketch File"
+                        }
+                    },
+                    "textStyles": {
+                        "B14AF6F1-428D-4FD9-968F-D4D7D0126701": {
+                            "name": "Local Text Style",
+                            "id": "B14AF6F1-428D-4FD9-968F-D4D7D0126701",
+                            "sourceProject": "File One 🦄 ",
+                            "sourceFile": "Sketch File"
+                        }
+                    },
+                    "layerStyles": {
+                        "81531BFE-55D7-442D-86B7-C513F890880D": {
+                            "name": "Local Fill",
+                            "id": "81531BFE-55D7-442D-86B7-C513F890880D",
+                            "sourceProject": "File One 🦄 ",
+                            "sourceFile": "Sketch File"
+                        },
+                        "AFEE2D67-30C3-4A44-9F8C-D9308F97352C": {
+                            "name": "Local Border",
+                            "id": "AFEE2D67-30C3-4A44-9F8C-D9308F97352C",
+                            "sourceProject": "File One 🦄 ",
+                            "sourceFile": "Sketch File"
+                        }
+                    }
+                }
+            }
+        },
+        "Sketch Library Example 📕": {
+            "Library Example": {
+                "counts": {
+                    "layers": 4,
+                    "layersReferencingExternalSymbols": 0,
+                    "layersReferencingExternalLayerStyles": 0,
+                    "layersReferencingExternalTextStyles": 0,
+                    "externalSymbols": {},
+                    "externalTextStyles": {},
+                    "externalLayerStyles": {}
+                },
+                "shareables": {
+                    "symbols": {
+                        "E9264408-903B-415C-B31B-3026550042C6": {
+                            "name": "Library Square",
+                            "id": "E9264408-903B-415C-B31B-3026550042C6",
+                            "sourceProject": "Sketch Library Example 📕",
+                            "sourceFile": "Library Example",
+                            "count": 4
+                        },
+                        "5FB584F9-4E82-49B5-A035-678B5A6136E6": {
+                            "name": "Library Circle",
+                            "id": "5FB584F9-4E82-49B5-A035-678B5A6136E6",
+                            "sourceProject": "Sketch Library Example 📕",
+                            "sourceFile": "Library Example",
+                            "count": 4
+                        }
+                    },
+                    "textStyles": {
+                        "6A65DC88-74B9-48D3-9714-65A7289D4262": {
+                            "name": "Library Text Style",
+                            "id": "6A65DC88-74B9-48D3-9714-65A7289D4262",
+                            "sourceProject": "Sketch Library Example 📕",
+                            "sourceFile": "Library Example",
+                            "count": 1
+                        }
+                    },
+                    "layerStyles": {
+                        "205CDB5E-99FF-46EF-A76F-D72BF325D8B8": {
+                            "name": "Library Fill",
+                            "id": "205CDB5E-99FF-46EF-A76F-D72BF325D8B8",
+                            "sourceProject": "Sketch Library Example 📕",
+                            "sourceFile": "Library Example",
+                            "count": 2
+                        },
+                        "76BB71DD-0D72-43D0-884C-F24451249079": {
+                            "name": "Library Border",
+                            "id": "76BB71DD-0D72-43D0-884C-F24451249079",
+                            "sourceProject": "Sketch Library Example 📕",
+                            "sourceFile": "Library Example",
+                            "count": 2
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "allSymbols": {
+        "CAC60635-F34A-4857-BE76-797E3D9C1675": {
+            "name": "Local Circle",
+            "id": "CAC60635-F34A-4857-BE76-797E3D9C1675",
+            "sourceProject": "File One 🦄 ",
+            "sourceFile": "Sketch File"
+        },
+        "3083BA43-2C97-4C33-B07B-52F7B0DE6C93": {
+            "name": "Local Square",
+            "id": "3083BA43-2C97-4C33-B07B-52F7B0DE6C93",
+            "sourceProject": "File One 🦄 ",
+            "sourceFile": "Sketch File"
+        },
+        "E9264408-903B-415C-B31B-3026550042C6": {
+            "name": "Library Square",
+            "id": "E9264408-903B-415C-B31B-3026550042C6",
+            "sourceProject": "Sketch Library Example 📕",
+            "sourceFile": "Library Example",
+            "count": 4
+        },
+        "5FB584F9-4E82-49B5-A035-678B5A6136E6": {
+            "name": "Library Circle",
+            "id": "5FB584F9-4E82-49B5-A035-678B5A6136E6",
+            "sourceProject": "Sketch Library Example 📕",
+            "sourceFile": "Library Example",
+            "count": 4
+        }
+    },
+    "allTextStyles": {
+        "B14AF6F1-428D-4FD9-968F-D4D7D0126701": {
+            "name": "Local Text Style",
+            "id": "B14AF6F1-428D-4FD9-968F-D4D7D0126701",
+            "sourceProject": "File One 🦄 ",
+            "sourceFile": "Sketch File"
+        },
+        "6A65DC88-74B9-48D3-9714-65A7289D4262": {
+            "name": "Library Text Style",
+            "id": "6A65DC88-74B9-48D3-9714-65A7289D4262",
+            "sourceProject": "Sketch Library Example 📕",
+            "sourceFile": "Library Example",
+            "count": 1
+        }
+    },
+    "allLayerStyles": {
+        "81531BFE-55D7-442D-86B7-C513F890880D": {
+            "name": "Local Fill",
+            "id": "81531BFE-55D7-442D-86B7-C513F890880D",
+            "sourceProject": "File One 🦄 ",
+            "sourceFile": "Sketch File"
+        },
+        "AFEE2D67-30C3-4A44-9F8C-D9308F97352C": {
+            "name": "Local Border",
+            "id": "AFEE2D67-30C3-4A44-9F8C-D9308F97352C",
+            "sourceProject": "File One 🦄 ",
+            "sourceFile": "Sketch File"
+        },
+        "205CDB5E-99FF-46EF-A76F-D72BF325D8B8": {
+            "name": "Library Fill",
+            "id": "205CDB5E-99FF-46EF-A76F-D72BF325D8B8",
+            "sourceProject": "Sketch Library Example 📕",
+            "sourceFile": "Library Example",
+            "count": 2
+        },
+        "76BB71DD-0D72-43D0-884C-F24451249079": {
+            "name": "Library Border",
+            "id": "76BB71DD-0D72-43D0-884C-F24451249079",
+            "sourceProject": "Sketch Library Example 📕",
+            "sourceFile": "Library Example",
+            "count": 2
+        }
+    }
+}

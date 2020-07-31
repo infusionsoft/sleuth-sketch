@@ -1,6 +1,6 @@
 {
     "name": "sleuth-sketch",
-    "version": "1.0.2",
+    "version": "1.1.0",
     "description": "Analyzes sketch files to determine usage of external libraries (e.g. a design system).",
     "repository": "https://github.com/infusionsoft/sleuth-sketch",
     "license": "MIT",
