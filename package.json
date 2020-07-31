@@ -12,6 +12,7 @@
     "dependencies": {
         "abstract-sdk": "^7.0.1",
         "del": "^5.1.0",
+        "figma-api": "^1.5.5",
         "node-sketch": "0.14.1",
         "terser-webpack-plugin": "^2.3.2",
         "vue": "2.6.11",

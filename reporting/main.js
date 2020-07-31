@@ -2,17 +2,21 @@ require('dotenv').config();
 
 let rootProjectDirectory = process.argv[2];
 if (!rootProjectDirectory || rootProjectDirectory === '--help' || rootProjectDirectory === '-h') {
-    console.log('usage: npm run report -- [ root_project_directory | abstract ]');
+    console.log('usage: npm run report -- [ root_project_directory | abstract | figma ]');
     process.exit();
 } else if (rootProjectDirectory === 'abstract') {
     rootProjectDirectory = "__TEMP";
+} else if (rootProjectDirectory === 'figma' ) {
+    rootProjectDirectory = "__FIGMA";
 }
 
 const fs = require('fs');
 const Abstract = require('abstract-sdk');
+const Figma = require('figma-api');
 const del = require('del');
 const path = require('path');
 const analyzeSketch = require('./analyze-sketch');
+const analyzeFigma = require('./analyze-figma');
 const { lstatSync, readdirSync } = fs;
 const { join } = path;
 
@@ -96,43 +100,75 @@ async function run(){
 }
 
 function report(){
-    // Start iterating through files
-    const getDirectories = path => {
-        return readdirSync(path).filter(filename => lstatSync(join(path, filename)).isDirectory());
-    }
-
-    const TARGET_FILE_EXTENSION = '.sketch';
     const RESULT_SAVE_DIRECTORY = join(__dirname, '../src/reports');
     if (!fs.existsSync(RESULT_SAVE_DIRECTORY)) {
         fs.mkdirSync(RESULT_SAVE_DIRECTORY);
     }
 
-    const projectNames = getDirectories(rootProjectDirectory);
     const promises = [];
     const result = {
         timestamp: startTime,
         projects: {}
     };
-    projectNames.forEach(projectName => {
-        const projectPath = join(rootProjectDirectory, projectName);
-        const targetFiles = readdirSync(projectPath).filter(filename => path.extname(filename).toLowerCase() === TARGET_FILE_EXTENSION);
-        const projectResult = result.projects[projectName] = {};
 
-        targetFiles.forEach(filename => {
-            const filePath = join(projectPath, filename);
-            const tidyFileName = filename.replace(/\s*\(.*\)\s*|\.sketch/g, '');
+    // Start iterating through files
+    if (rootProjectDirectory !== "__FIGMA") { // Sketch/Abstract
 
-            promises.push(analyzeSketch({filePath: filePath, projectName: projectName, fileName: tidyFileName})
-                .then(counts => {
-                    projectResult[tidyFileName] = counts;
-                    console.log(projectName + " > " + tidyFileName, counts);
-                })
-                .catch(error => {
-                    console.log('error', error);
-                })
-            );
+        const getDirectories = path => {
+            return readdirSync(path).filter(filename => lstatSync(join(path, filename)).isDirectory());
+        }
+
+        const TARGET_FILE_EXTENSION = '.sketch';
+        const projectNames = getDirectories(rootProjectDirectory);
+
+        projectNames.forEach(projectName => {
+            const projectPath = join(rootProjectDirectory, projectName);
+            const targetFiles = readdirSync(projectPath).filter(filename => path.extname(filename).toLowerCase() === TARGET_FILE_EXTENSION);
+            const projectResult = result.projects[projectName] = {};
+
+            targetFiles.forEach(filename => {
+                const filePath = join(projectPath, filename);
+                const tidyFileName = filename.replace(/\s*\(.*\)\s*|\.sketch/g, '');
+
+                promises.push(analyzeSketch({filePath: filePath, projectName: projectName, fileName: tidyFileName})
+                    .then(counts => {
+                        projectResult[tidyFileName] = counts;
+                        console.log(projectName + " > " + tidyFileName, counts);
+                    })
+                    .catch(error => {
+                        console.log('error', error);
+                    })
+                );
+            });
         });
-    });
+    } else { // FIGMA!
+        const figma = new Figma.Api({
+            personalAccessToken: process.env.FIGMA_TOKEN,
+        });
+        const teams = process.env.FIGMA_TEAMS.split(","); // Need a way to get this list from the api!
+        let projects = [];
+        // get projects for every team
+        teams.forEach( team => {
+            const tempProjects = await figma.getTeamProjects(team);
+            projects.concat(tempProjects.projects);
+        });
+        projects.forEach(project => {
+            const files = await figma.getProjectFiles(project.id).files;
+
+            files.forEach(file => {
+
+                promises.push(analyzeFigma({fileKey: file.key, projectName: project.name, fileName: file.name})
+                    .then(counts => {
+                        projectResult[fileName] = counts;
+                        console.log(project.name + " > " + file.name, counts);
+                    })
+                    .catch(error => {
+                        console.log('error', error);
+                    })
+                );
+            });
+        });
+    }
 
     Promise.all(promises).then(() => {
         const endTime = Date.now();
