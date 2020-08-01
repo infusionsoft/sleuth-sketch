@@ -32,7 +32,7 @@ const countLayers = (node, counts) => {
         for (style in node.styles)
         {
             thisStyle = node.styles[style];
-            if (externalTextStyleIds.has(thisStyle) || node.type != "TEXT") {
+            if (externalTextStyleIds.has(thisStyle)) {
                 textGood = true;
                 if (typeof counts.externalTextStyles[thisStyle] === "undefined") {
                     counts.externalTextStyles[thisStyle]=1;
@@ -43,6 +43,9 @@ const countLayers = (node, counts) => {
             }
             if (externalLayerStyleIds.has(thisStyle)) {
                 colorGood = true;
+                if (node.type != "TEXT") {
+                    textGood = true;
+                }
                 if (typeof counts.externalLayerStyles[thisStyle] === "undefined") {
                     counts.externalLayerStyles[thisStyle]=1;
                 }
@@ -67,10 +70,11 @@ const countLayers = (node, counts) => {
 
 module.exports = async params => {
     const file = await figma.getFile(params.fileKey);
-    const pages = [...file.pages];
-    externalSymbolIds = new Set(file.components.map((item) => item.key));
-    externalTextStyleIds = new Set(file.styles.map((item) => item.styleType == "TEXT" ? item.key : null ));
-    externalLayerStyleIds = new Set(file.styles.map((item) => item.styleType != "TEXT" ? item.key : null));
+    const pages = [...file.document.children];
+
+    externalSymbolIds = new Set(Object.keys(file.components).map((key) => file.components[key].key != "" ? key  : null )); // This doesn't work because components is an object, not an array.
+    externalTextStyleIds = new Set(Object.keys(file.styles).map((key) => file.styles[key].styleType == "TEXT" ? key : null ));
+    externalLayerStyleIds = new Set(Object.keys(file.styles).map((key) => file.styles[key].styleType != "TEXT" ? key : null ));
     externalStyleLinks = {};
     const counts = {
         layers: 0,
@@ -132,6 +136,11 @@ module.exports = async params => {
             countLayers(page, counts);
         }
     });
-
-    return {counts, shareables};
+    const returnThis = {
+        counts,
+        shareables,
+        fileName: params.fileName,
+        projectName: params.projectName,
+    }
+    return returnThis;
 };
