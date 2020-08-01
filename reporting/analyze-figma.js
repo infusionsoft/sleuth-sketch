@@ -25,6 +25,7 @@ const countLayers = (node, counts) => {
         else{
             counts.externalSymbols[node.componentId]++;
         }
+        counts.layersReferencingExternalAnyStyles++;
     }
     else if (node.styles) {
         var textGood = false;
@@ -62,6 +63,7 @@ const countLayers = (node, counts) => {
             else {
                 counts.layersReferencingExternalLayerStyles++;
             }
+            counts.layersReferencingExternalAnyStyles++;
         }
     }
 
@@ -81,6 +83,7 @@ module.exports = async params => {
         layersReferencingExternalSymbols: 0,
         layersReferencingExternalLayerStyles: 0,
         layersReferencingExternalTextStyles: 0,
+        layersReferencingExternalAnyStyles: 0,
         externalSymbols: {},
         externalTextStyles: {},
         externalLayerStyles: {},

@@ -220,7 +220,7 @@ export default {
                             projectRow.layersReferencingExternalSymbols += file.counts.layersReferencingExternalSymbols;
                             projectRow.layersReferencingExternalLayerStyles += file.counts.layersReferencingExternalLayerStyles;
                             projectRow.layersReferencingExternalTextStyles += file.counts.layersReferencingExternalTextStyles;
-                            projectRow.layersReferencingExternalAny += file.counts.layersReferencingExternalTextStyles + file.counts.layersReferencingExternalLayerStyles + file.counts.layersReferencingExternalSymbols;
+                            projectRow.layersReferencingExternalAny += (typeof file.counts.layersReferencingExternalAnyStyles !== "undefined") ? file.counts.layersReferencingExternalAnyStyles : file.counts.layersReferencingExternalTextStyles + file.counts.layersReferencingExternalLayerStyles + file.counts.layersReferencingExternalSymbols;
                         });
 
                         if (projectRow.layerCount > 0) {

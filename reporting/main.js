@@ -99,7 +99,7 @@ async function run(){
     }
 }
 
-function processSketchFiles(result){
+function processSketchFiles(){
     promises = [];
     // Start iterating through files
     const getDirectories = path => {
@@ -108,20 +108,22 @@ function processSketchFiles(result){
 
     const TARGET_FILE_EXTENSION = '.sketch';
     const projectNames = getDirectories(rootProjectDirectory);
-
+    const projectResult = {
+        projects : {}
+    }
     projectNames.forEach(projectName => {
         const projectPath = join(rootProjectDirectory, projectName);
         const targetFiles = readdirSync(projectPath).filter(filename => path.extname(filename).toLowerCase() === TARGET_FILE_EXTENSION);
-        const projectResult = result.projects[projectName] = {};
+        projectResult.projects[projectName] = {};
 
         targetFiles.forEach(filename => {
             const filePath = join(projectPath, filename);
             const tidyFileName = filename.replace(/\s*\(.*\)\s*|\.sketch/g, '');
 
             promises.push(analyzeSketch({filePath: filePath, projectName: projectName, fileName: tidyFileName})
-                .then(counts => {
-                    projectResult[tidyFileName] = counts;
-                    console.log(projectName + " > " + tidyFileName, counts);
+                .then(result => {
+                    projectResult.projects[result.projectName][result.fileName] = result;
+                    console.log(result.projectName + " > " + result.fileName, result);
                 })
                 .catch(error => {
                     console.log('error', error);
@@ -129,7 +131,7 @@ function processSketchFiles(result){
             );
         });
     });
-    Promise.all(promises).then(report)
+    Promise.all(promises).then(() => {report(projectResult)})
     .catch(error => {
         console.log('Error writing report to file', error);
     });
@@ -163,43 +165,45 @@ function report(result){
     result.allSymbols = allSymbols;
     result.allTextStyles = allTextStyles;
     result.allLayerStyles = allLayerStyles;
+    result.timestamp = startTime;
 
     // Now let's count the instances of symbols and distribute those counts around where they make sense.
-    for (project in result.projects) {
-        const thisProject = result.projects[project];
+    if (rootProjectDirectory !== "__FIGMA") { // Doesn't work in Figma yet
+        for (project in result.projects) {
+            const thisProject = result.projects[project];
 
-        for (file in thisProject) {
-            const thisFile = thisProject[file];
-            for (symbol in thisFile.counts.externalSymbols) {
-                symbolCount = thisFile.counts.externalSymbols[symbol];
-                if (typeof result.allSymbols[symbol].count !== "undefined")
-                {
-                    result.allSymbols[symbol].count += symbolCount;
-                } else {
-                    result.allSymbols[symbol].count = symbolCount;
+            for (file in thisProject) {
+                const thisFile = thisProject[file];
+                for (symbol in thisFile.counts.externalSymbols) {
+                    symbolCount = thisFile.counts.externalSymbols[symbol];
+                    if (typeof result.allSymbols[symbol].count !== "undefined")
+                    {
+                        result.allSymbols[symbol].count += symbolCount;
+                    } else {
+                        result.allSymbols[symbol].count = symbolCount;
+                    }
                 }
-            }
-            for (style in thisFile.counts.externalTextStyles) {
-                styleCount = thisFile.counts.externalTextStyles[style];
-                if (typeof result.allTextStyles[style].count !== "undefined")
-                {
-                    result.allTextStyles[style].count += styleCount;
-                } else {
-                    result.allTextStyles[style].count = styleCount;
+                for (style in thisFile.counts.externalTextStyles) {
+                    styleCount = thisFile.counts.externalTextStyles[style];
+                    if (typeof result.allTextStyles[style].count !== "undefined")
+                    {
+                        result.allTextStyles[style].count += styleCount;
+                    } else {
+                        result.allTextStyles[style].count = styleCount;
+                    }
                 }
-            }
-            for (style in thisFile.counts.externalLayerStyles) {
-                styleCount = thisFile.counts.externalLayerStyles[style];
-                if (typeof result.allLayerStyles[style].count !== "undefined")
-                {
-                    result.allLayerStyles[style].count += styleCount;
-                } else {
-                    result.allLayerStyles[style].count = styleCount;
+                for (style in thisFile.counts.externalLayerStyles) {
+                    styleCount = thisFile.counts.externalLayerStyles[style];
+                    if (typeof result.allLayerStyles[style].count !== "undefined")
+                    {
+                        result.allLayerStyles[style].count += styleCount;
+                    } else {
+                        result.allLayerStyles[style].count = styleCount;
+                    }
                 }
             }
         }
     }
-
     fs.writeFileSync(
         `${RESULT_SAVE_DIRECTORY}/${endTime}.json`,
         JSON.stringify(result, null, 4)

@@ -23,6 +23,7 @@ const countLayers = (node, counts) => {
         else{
             counts.externalSymbols[thisMasterID]++;
         }
+        counts.layersReferencingExternalAnyStyles++;
     }
     if (node.sharedStyleID && externalLayerStyleIds.has(node.sharedStyleID)) {
         counts.layersReferencingExternalLayerStyles++;
@@ -33,6 +34,7 @@ const countLayers = (node, counts) => {
         else{
             counts.externalLayerStyles[thisMasterID]++;
         }
+        counts.layersReferencingExternalAnyStyles++;
     }
 
     if (node.sharedStyleID && externalTextStyleIds.has(node.sharedStyleID)) {
@@ -44,6 +46,7 @@ const countLayers = (node, counts) => {
         else{
             counts.externalTextStyles[thisMasterID]++;
         }
+        counts.layersReferencingExternalAnyStyles++;
     }
 
     return counts;
@@ -61,6 +64,7 @@ module.exports = async params => {
         layersReferencingExternalSymbols: 0,
         layersReferencingExternalLayerStyles: 0,
         layersReferencingExternalTextStyles: 0,
+        layersReferencingExternalAnyStyles: 0,
         externalSymbols: {},
         externalTextStyles: {},
         externalLayerStyles: {},
@@ -127,5 +131,5 @@ module.exports = async params => {
         }
     });
 
-    return {counts, shareables};
+    return {counts, shareables, projectName: params.projectName, fileName: params.fileName};
 };

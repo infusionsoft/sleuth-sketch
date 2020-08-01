@@ -1,5 +1,4 @@
 {
-    "timestamp": 1596158255553,
     "projects": {
         "File One 🦄 ": {
             "Sketch File": {
@@ -8,6 +7,7 @@
                     "layersReferencingExternalSymbols": 8,
                     "layersReferencingExternalLayerStyles": 4,
                     "layersReferencingExternalTextStyles": 3,
+                    "layersReferencingExternalAnyStyles": 15,
                     "externalSymbols": {
                         "5FB584F9-4E82-49B5-A035-678B5A6136E6": 4,
                         "E9264408-903B-415C-B31B-3026550042C6": 4
@@ -57,7 +57,9 @@
                             "sourceFile": "Sketch File"
                         }
                     }
-                }
+                },
+                "projectName": "File One 🦄 ",
+                "fileName": "Sketch File"
             }
         },
         "Sketch Library Example 📕": {
@@ -67,6 +69,7 @@
                     "layersReferencingExternalSymbols": 0,
                     "layersReferencingExternalLayerStyles": 0,
                     "layersReferencingExternalTextStyles": 0,
+                    "layersReferencingExternalAnyStyles": 0,
                     "externalSymbols": {},
                     "externalTextStyles": {},
                     "externalLayerStyles": {}
@@ -113,7 +116,9 @@
                             "count": 2
                         }
                     }
-                }
+                },
+                "projectName": "Sketch Library Example 📕",
+                "fileName": "Library Example"
             }
         }
     },
@@ -187,5 +192,6 @@
             "sourceFile": "Library Example",
             "count": 2
         }
-    }
+    },
+    "timestamp": 1596261447879
 }

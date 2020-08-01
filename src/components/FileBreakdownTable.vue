@@ -14,36 +14,38 @@
 
         <table-grid-column
             label="Layers"
-            prop="layers"
             width="50"
             sortable
             numeric
-        />
+        >
+            <span slot-scope="props">{{ props.counts.layers }}</span>
+        </table-grid-column>
 
         <table-grid-column
             label="Lib Symbols"
-            prop="layersReferencingExternalSymbols"
             width="50"
             sortable
             numeric
-        />
+        >
+            <span slot-scope="props">{{ props.counts.layersReferencingExternalSymbols }}</span>
+        </table-grid-column>
 
         <table-grid-column
             label="Lib Colors"
-            prop="layersReferencingExternalLayerStyles"
             width="50"
             sortable
             numeric
-        />
-
+        >
+            <span slot-scope="props">{{ props.counts.layersReferencingExternalLayerStyles }}</span>
+        </table-grid-column>
         <table-grid-column
             label="Lib Type"
-            prop="layersReferencingExternalTextStyles"
             width="50"
             sortable
             numeric
-        />
-
+        >
+            <span slot-scope="props">{{ props.counts.layersReferencingExternalTextStyles }}</span>
+        </table-grid-column>
         <table-grid-column
             label="Coverage"
             prop="coverage"
