@@ -1,6 +1,6 @@
 {
     "name": "sleuth-sketch",
-    "version": "1.1.0",
+    "version": "1.2.0",
     "description": "Analyzes sketch files to determine usage of external libraries (e.g. a design system).",
     "repository": "https://github.com/infusionsoft/sleuth-sketch",
     "license": "MIT",
@@ -12,6 +12,7 @@
     "dependencies": {
         "abstract-sdk": "^7.0.1",
         "del": "^5.1.0",
+        "figma-api": "^1.5.5",
         "node-sketch": "0.14.1",
         "terser-webpack-plugin": "^2.3.2",
         "vue": "2.6.11",

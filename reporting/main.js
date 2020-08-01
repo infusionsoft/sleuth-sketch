@@ -2,17 +2,21 @@ require('dotenv').config();
 
 let rootProjectDirectory = process.argv[2];
 if (!rootProjectDirectory || rootProjectDirectory === '--help' || rootProjectDirectory === '-h') {
-    console.log('usage: npm run report -- [ root_project_directory | abstract ]');
+    console.log('usage: npm run report -- [ root_project_directory | abstract | figma ]');
     process.exit();
 } else if (rootProjectDirectory === 'abstract') {
     rootProjectDirectory = "__TEMP";
+} else if (rootProjectDirectory === 'figma' ) {
+    rootProjectDirectory = "__FIGMA";
 }
 
 const fs = require('fs');
 const Abstract = require('abstract-sdk');
+const Figma = require('figma-api');
 const del = require('del');
 const path = require('path');
 const analyzeSketch = require('./analyze-sketch');
+const analyzeFigma = require('./analyze-figma');
 const { lstatSync, readdirSync } = fs;
 const { join } = path;
 
@@ -95,37 +99,31 @@ async function run(){
     }
 }
 
-function report(){
+function processSketchFiles(){
+    promises = [];
     // Start iterating through files
     const getDirectories = path => {
         return readdirSync(path).filter(filename => lstatSync(join(path, filename)).isDirectory());
     }
 
     const TARGET_FILE_EXTENSION = '.sketch';
-    const RESULT_SAVE_DIRECTORY = join(__dirname, '../src/reports');
-    if (!fs.existsSync(RESULT_SAVE_DIRECTORY)) {
-        fs.mkdirSync(RESULT_SAVE_DIRECTORY);
-    }
-
     const projectNames = getDirectories(rootProjectDirectory);
-    const promises = [];
-    const result = {
-        timestamp: startTime,
-        projects: {}
-    };
+    const projectResult = {
+        projects : {}
+    }
     projectNames.forEach(projectName => {
         const projectPath = join(rootProjectDirectory, projectName);
         const targetFiles = readdirSync(projectPath).filter(filename => path.extname(filename).toLowerCase() === TARGET_FILE_EXTENSION);
-        const projectResult = result.projects[projectName] = {};
+        projectResult.projects[projectName] = {};
 
         targetFiles.forEach(filename => {
             const filePath = join(projectPath, filename);
             const tidyFileName = filename.replace(/\s*\(.*\)\s*|\.sketch/g, '');
 
             promises.push(analyzeSketch({filePath: filePath, projectName: projectName, fileName: tidyFileName})
-                .then(counts => {
-                    projectResult[tidyFileName] = counts;
-                    console.log(projectName + " > " + tidyFileName, counts);
+                .then(result => {
+                    projectResult.projects[result.projectName][result.fileName] = result;
+                    console.log(result.projectName + " > " + result.fileName, result);
                 })
                 .catch(error => {
                     console.log('error', error);
@@ -133,33 +131,44 @@ function report(){
             );
         });
     });
+    Promise.all(promises).then(() => {report(projectResult)})
+    .catch(error => {
+        console.log('Error writing report to file', error);
+    });
+}
 
-    Promise.all(promises).then(() => {
-        const endTime = Date.now();
-        const elapsed = endTime - startTime;
+function report(result){
+    const RESULT_SAVE_DIRECTORY = join(__dirname, '../src/reports');
+    if (!fs.existsSync(RESULT_SAVE_DIRECTORY)) {
+        fs.mkdirSync(RESULT_SAVE_DIRECTORY);
+    }
 
-        // Let's do a bit of post processing to link our symbol ID's together.
+    const endTime = Date.now();
+    const elapsed = endTime - startTime;
 
-        // Merge all the symbols and styles together into one object.
-        var allSymbols = {};
-        var allTextStyles = {};
-        var allLayerStyles = {};
+    // Let's do a bit of post processing to link our symbol ID's together.
 
-        for (project in result.projects) {
-            const thisProject = result.projects[project];
+    // Merge all the symbols and styles together into one object.
+    var allSymbols = {};
+    var allTextStyles = {};
+    var allLayerStyles = {};
 
-            for (file in thisProject) {
-                const thisFile = thisProject[file];
-                allSymbols = Object.assign(allSymbols, thisFile.shareables.symbols);
-                allTextStyles = Object.assign(allTextStyles, thisFile.shareables.textStyles);
-                allLayerStyles = Object.assign(allLayerStyles, thisFile.shareables.layerStyles);
-            }
+    for (project in result.projects) {
+        const thisProject = result.projects[project];
+        for (file in thisProject) {
+            const thisFile = thisProject[file];
+            allSymbols = Object.assign(allSymbols, thisFile.shareables.symbols);
+            allTextStyles = Object.assign(allTextStyles, thisFile.shareables.textStyles);
+            allLayerStyles = Object.assign(allLayerStyles, thisFile.shareables.layerStyles);
         }
-        result.allSymbols = allSymbols;
-        result.allTextStyles = allTextStyles;
-        result.allLayerStyles = allLayerStyles;
+    }
+    result.allSymbols = allSymbols;
+    result.allTextStyles = allTextStyles;
+    result.allLayerStyles = allLayerStyles;
+    result.timestamp = startTime;
 
-        // Now let's count the instances of symbols and distribute those counts around where they make sense.
+    // Now let's count the instances of symbols and distribute those counts around where they make sense.
+    if (rootProjectDirectory !== "__FIGMA") { // Doesn't work in Figma yet
         for (project in result.projects) {
             const thisProject = result.projects[project];
 
@@ -194,25 +203,92 @@ function report(){
                 }
             }
         }
+    }
+    fs.writeFileSync(
+        `${RESULT_SAVE_DIRECTORY}/${endTime}.json`,
+        JSON.stringify(result, null, 4)
+    );
 
-        fs.writeFileSync(
-            `${RESULT_SAVE_DIRECTORY}/${endTime}.json`,
-            JSON.stringify(result, null, 4)
-        );
+    console.log(`It took ${elapsed / 1000} seconds to finish.`);
+    console.log(`You should run "npm run dev" or "npm run build" to see your report.`);
+}
 
-        console.log(`It took ${elapsed / 1000} seconds to finish.`);
-        console.log(`You should run "npm run dev" or "npm run build" to see your report.`);
-    }).catch(error => {
+async function getFigma (){
+    const figma = new Figma.Api({
+        personalAccessToken: process.env.FIGMA_TOKEN,
+    });
+    return {api: figma};
+}
+
+async function getFigmaTeams(figma) {
+    console.log("Getting teams in your org...");
+    const teams = process.env.FIGMA_TEAMS.split(","); // Need a way to get this list from the api!
+    figma.teams = teams;
+    return figma;
+}
+
+async function getFigmaProjects(figma) {
+    let projects = [];
+    // get projects for every team
+    for (team in figma.teams) {
+        const tempProjects = await figma.api.getTeamProjects(figma.teams[team]);
+        console.log("Getting projects in Team " +  tempProjects.name);
+        projects = projects.concat(tempProjects.projects);
+    }
+    figma.projects = projects;
+    return figma;
+}
+
+async function processFigmaFiles(figma) {
+
+    promises = [];
+    const projectResult = {
+        projects: {},
+    };
+
+    for (project in figma.projects) {
+        const files = await figma.api.getProjectFiles(figma.projects[project].id);
+        projectResult.projects[figma.projects[project].name] = {};
+        for(file in files.files) {
+            console.log("Getting file: " + figma.projects[project].name + " > " + files.files[file].name);
+            promises.push(analyzeFigma({fileKey: files.files[file].key, projectName: figma.projects[project].name, fileName: files.files[file].name})
+                .then(results => {
+                    projectResult.projects[results.projectName][results.fileName] = {
+                        counts: results.counts,
+                        shareables: results.shareables,
+                    };
+                    console.log(results.projectName + " > " + results.fileName, results.counts);
+                })
+                .catch(error => {
+                    console.log('error', error);
+                })
+            );
+        }
+    };
+    Promise.all(promises).then(() => {report(projectResult)})
+    .catch(error => {
         console.log('Error writing report to file', error);
     });
 }
 
-run().then(function(){
-    report();
-}).then(function(){
-    if (rootProjectDirectory === '__TEMP') {
-        del.sync([ rootProjectDirectory + '/**']);
-    }
-}).catch(function(e){
-    console.log(e);
-});
+
+if (rootProjectDirectory !== "__FIGMA") {
+    run()
+    .then(processSketchFiles)
+    .then(function(){
+        if (rootProjectDirectory === '__TEMP') {
+            del.sync([ rootProjectDirectory + '/**']);
+        }
+    }).catch(function(e){
+        console.log(e);
+    });
+} else {
+    // FIGMA!
+    getFigma()
+        .then(getFigmaTeams)
+        .then(getFigmaProjects)
+        .then(processFigmaFiles)
+        .catch(function(e){
+            console.log(e);
+        });
+}
