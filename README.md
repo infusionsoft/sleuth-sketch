@@ -18,6 +18,8 @@ Here's [a report built from the sample directory](https://infusionsoft.github.io
 2. [Sketch](https://sketch.com) - You need Sketch installed to process the files
 3. [Abstract](https://abstract.com) (optional, but recommended) - If your team uses Abstract, you can automatically scan all of your team's projects. Make sure your Abstract projects are all synced before running.
 
+... Or you can use [Figma](https://figma.com), but you still need Node.
+
 ## Getting started
 
 1. [Download this repo](https://github.com/infusionsoft/sleuth-sketch/archive/master.zip) and extract it. (or fork it if you know what you're doing)
@@ -51,6 +53,28 @@ This will download all sketch files from all active projects to a temporary dire
 4. Copy the id from your address bar... `app.abstract.com/organizations/ [THIS IS YOUR ORG ID] /projects`
 5. Paste it into `EXAMPLE.env`
 6. Get an [Abstract API token](https://sdk.goabstract.com/docs/authentication/)
+7. Paste it into `EXAMPLE.env` ** DO NOT PUBLISH YOUR API TOKEN TO A PUBLIC REPO**
+8. Rename `EXAMPLE.env` to `.env`
+
+## Using Figma
+
+### Generate report from Figma
+
+``` bash
+npm run report -- figma
+```
+
+This will download all sketch files from all active projects to a temporary directory and scan them to build reports.
+
+### Setting up Figma
+
+1. Open `EXAMPLE.env` in a code editor (we like [VSCode](https://code.visualstudio.com/))
+2. Log into [figma](https://figma.com) from a web browser
+3. Select the team you want to track (you can track multiple, but start with one)
+4. Copy the team id from your address bar... `.../team/ [THIS IS YOUR TEAM ID] /team-name`
+5. Paste it into `EXAMPLE.env`
+6. Repeat the process with each team you want to track, inserting a comma (,) between each ID - No spaces!
+6. Get a Figma Personal Token from your user profile
 7. Paste it into `EXAMPLE.env` ** DO NOT PUBLISH YOUR API TOKEN TO A PUBLIC REPO**
 8. Rename `EXAMPLE.env` to `.env`
 
