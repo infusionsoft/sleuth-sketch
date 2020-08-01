@@ -7,7 +7,7 @@ const plugins = process.env.NODE_ENV === 'production' ? [new TerserPlugin({
 })] : [];
 
 module.exports = {
-    publicPath: 'sleuth-sketch',
+    publicPath: '/sleuth-sketch',
     
     outputDir: path.resolve(__dirname, "./docs"),
 
