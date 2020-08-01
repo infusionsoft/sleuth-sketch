@@ -14,9 +14,10 @@ const countLayers = (node, counts) => {
         node.children.forEach((layerNode) => {
             countLayers(layerNode, counts);
         });
-    } else {
-        counts.layers++;
-    }
+    } 
+    
+    counts.layers++;
+    
     if (node.type == "INSTANCE" && externalSymbolIds.has(node.componentId)) {
         counts.layersReferencingExternalSymbols++;
         if (typeof counts.externalSymbols[node.componentId] === "undefined") {
