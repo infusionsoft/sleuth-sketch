@@ -68,7 +68,7 @@ async function run(){
             }
 
             try{
-                const files = await cliClient.files.list(filesIdentifier);
+                const files = await apiClient.files.list(filesIdentifier);
 
                 fs.mkdirSync(rootProjectDirectory + '/' + cleanFilePaths(projects[projectKeys[pKey]].name));
                 const fileKeys = Object.keys(files);
@@ -86,10 +86,10 @@ async function run(){
                         filename: rootProjectDirectory + '/' + cleanFilePaths(projects[projectKeys[pKey]].name) + '/' + cleanFilePaths(files[fileKeys[fKey]].name+'.sketch'),
                     }
 
-                    await cliClient.files.raw(fileIdentifier, fileProps);
+                    await apiClient.files.raw(fileIdentifier, fileProps);
                 }
             } catch( error ) {
-                console.log("--Project not synced. Skipping.");
+                console.log(error);
             }
         }
         const downloadDoneTime = Date.now();
@@ -176,29 +176,35 @@ function report(result){
                 const thisFile = thisProject[file];
                 for (symbol in thisFile.counts.externalSymbols) {
                     symbolCount = thisFile.counts.externalSymbols[symbol];
-                    if (typeof result.allSymbols[symbol].count !== "undefined")
-                    {
-                        result.allSymbols[symbol].count += symbolCount;
-                    } else {
-                        result.allSymbols[symbol].count = symbolCount;
+                    if (typeof result.allSymbols[symbol] !== "undefined") {
+                        if (typeof result.allSymbols[symbol].count !== "undefined")
+                        {
+                            result.allSymbols[symbol].count += symbolCount;
+                        } else {
+                            result.allSymbols[symbol].count = symbolCount;
+                        }
                     }
                 }
                 for (style in thisFile.counts.externalTextStyles) {
                     styleCount = thisFile.counts.externalTextStyles[style];
-                    if (typeof result.allTextStyles[style].count !== "undefined")
-                    {
-                        result.allTextStyles[style].count += styleCount;
-                    } else {
-                        result.allTextStyles[style].count = styleCount;
+                    if (typeof result.allTextStyles[style] !== "undefined") {
+                        if (typeof result.allTextStyles[style].count !== "undefined")
+                        {
+                            result.allTextStyles[style].count += styleCount;
+                        } else {
+                            result.allTextStyles[style].count = styleCount;
+                        }
                     }
                 }
                 for (style in thisFile.counts.externalLayerStyles) {
                     styleCount = thisFile.counts.externalLayerStyles[style];
-                    if (typeof result.allLayerStyles[style].count !== "undefined")
-                    {
-                        result.allLayerStyles[style].count += styleCount;
-                    } else {
-                        result.allLayerStyles[style].count = styleCount;
+                    if (typeof result.allLayerStyles[style] !== "undefined") {
+                        if (typeof result.allLayerStyles[style].count !== "undefined")
+                        {
+                            result.allLayerStyles[style].count += styleCount;
+                        } else {
+                            result.allLayerStyles[style].count = styleCount;
+                        }
                     }
                 }
             }
