@@ -14,7 +14,7 @@
         "del": "^5.1.0",
         "figma-api": "^1.5.5",
         "node-sketch": "0.14.1",
-        "terser-webpack-plugin": "^2.3.2",
+        "terser-webpack-plugin": "^2.3.8",
         "vue": "2.6.11",
         "webpack": "^4.36.0"
     },
@@ -22,9 +22,9 @@
         "@vue/cli-plugin-babel": "^3.12.1",
         "@vue/cli-service": "^3.12.1",
         "cross-env": "6.0.3",
-        "node-sass": "^4.13.1",
+        "node-sass": "^4.14.1",
         "sass-loader": "8.0.0",
-        "svg-sprite-loader": "^4.1.6",
+        "svg-sprite-loader": "^4.3.0",
         "vue-template-compiler": "^2.6.7"
     }
 }
