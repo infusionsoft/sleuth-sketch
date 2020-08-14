@@ -1,30 +1,30 @@
 {
-    "name": "sleuth-sketch",
-    "version": "1.2.1",
-    "description": "Analyzes sketch files to determine usage of external libraries (e.g. a design system).",
-    "repository": "https://github.com/infusionsoft/sleuth-sketch",
-    "license": "MIT",
-    "scripts": {
-        "dev": "vue-cli-service serve --open --port 2189 --mode localdev",
-        "build": "vue-cli-service build",
-        "report": "node --max-old-space-size=8192 reporting/main.js"
-    },
-    "dependencies": {
-        "abstract-sdk": "^8.0.0-beta.36",
-        "del": "^5.1.0",
-        "figma-api": "^1.5.5",
-        "node-sketch": "0.14.1",
-        "terser-webpack-plugin": "^2.3.8",
-        "vue": "2.6.11",
-        "webpack": "^4.36.0"
-    },
-    "devDependencies": {
-        "@vue/cli-plugin-babel": "^3.12.1",
-        "@vue/cli-service": "^3.12.1",
-        "cross-env": "6.0.3",
-        "node-sass": "^4.14.1",
-        "sass-loader": "8.0.0",
-        "svg-sprite-loader": "^4.3.0",
-        "vue-template-compiler": "^2.6.7"
-    }
+  "name": "sleuth-sketch",
+  "version": "1.2.1",
+  "description": "Analyzes sketch files to determine usage of external libraries (e.g. a design system).",
+  "repository": "https://github.com/infusionsoft/sleuth-sketch",
+  "license": "MIT",
+  "scripts": {
+    "dev": "vue-cli-service serve --open --port 2189 --mode localdev",
+    "build": "vue-cli-service build",
+    "report": "node --max-old-space-size=8192 reporting/main.js"
+  },
+  "dependencies": {
+    "abstract-sdk": "^8.0.0-beta.36",
+    "del": "^5.1.0",
+    "figma-api": "^1.5.5",
+    "node-sketch": "0.14.1",
+    "terser-webpack-plugin": "^2.3.8",
+    "vue": "2.6.11",
+    "webpack": "^4.44.1"
+  },
+  "devDependencies": {
+    "@vue/cli-plugin-babel": "^4.5.3",
+    "@vue/cli-service": "^4.5.3",
+    "cross-env": "6.0.3",
+    "node-sass": "^4.14.1",
+    "sass-loader": "8.0.0",
+    "svg-sprite-loader": "^4.3.0",
+    "vue-template-compiler": "^2.6.7"
+  }
 }

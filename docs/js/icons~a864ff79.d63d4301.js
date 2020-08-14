@@ -1,2 +1,2 @@
 (window.webpackJsonp=window.webpackJsonp||[]).push([["icons~a864ff79"],{a3f8:function(a,o,w){"use strict";w.r(o);var e=w("e017"),n=w.n(e),s=w("21a1"),r=w.n(s),d=new n.a({id:"arrow-up",use:"arrow-up-usage",viewBox:"0 0 24 24",content:'<symbol xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" id="arrow-up"><path d="M12.707 4.293l8 8a1 1 0 0 1-1.414 1.414L13 7.414V19a1 1 0 1 1-2 0V7.414l-6.293 6.293a1 1 0 0 1-1.414-1.414l8-8a1 1 0 0 1 1.414 0z" fill-rule="evenodd" /></symbol>'});r.a.add(d),o.default=d}}]);
-//# sourceMappingURL=icons~a864ff79.d3bff83c.js.map
+//# sourceMappingURL=icons~a864ff79.d63d4301.js.map
