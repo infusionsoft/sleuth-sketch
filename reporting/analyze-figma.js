@@ -14,10 +14,10 @@ const countLayers = (node, counts) => {
         node.children.forEach((layerNode) => {
             countLayers(layerNode, counts);
         });
-    } 
-    
+    }
+
     counts.layers++;
-    
+
     if (node.type == "INSTANCE" && externalSymbolIds.has(node.componentId)) {
         counts.layersReferencingExternalSymbols++;
         if (typeof counts.externalSymbols[node.componentId] === "undefined") {
@@ -137,8 +137,16 @@ module.exports = async params => {
 
     pages.forEach(page => {
         if (page) {
-            countLayers(page, counts);
-        }
+            const thisCounts = countLayers(page, counts);
+            counts.layers += thisCounts.layers;
+            counts.layersReferencingExternalSymbols += thisCounts.layersReferencingExternalSymbols;
+            counts.layersReferencingExternalLayerStyles += thisCounts.layersReferencingExternalLayerStyles;
+            counts.layersReferencingExternalTextStyles += thisCounts.layersReferencingExternalTextStyles;
+            counts.layersReferencingExternalAnyStyles += thisCounts.layersReferencingExternalAnyStyles;
+            counts.externalSymbols = {...counts.externalSymbols, ...thisCounts.externalSymbols};
+            counts.externalTextStyles = {...counts.externalTextStyles, ...thisCounts.externalTextStyles};
+            counts.externalLayerStyles = {...counts.externalLayerStyles, ...thisCounts.externalLayerStyles};
+            }
     });
     const returnThis = {
         counts,
