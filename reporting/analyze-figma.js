@@ -16,58 +16,59 @@ const countLayers = (node, counts) => {
         });
     }
 
-    counts.layers++;
+    if (node.type != "GROUP"  && node.type != "DOCUMENT" && node.type != "PAGE") {
+        counts.layers++;
 
-    if (node.type == "INSTANCE" && externalSymbolIds.has(node.componentId)) {
-        counts.layersReferencingExternalSymbols++;
-        if (typeof counts.externalSymbols[node.componentId] === "undefined") {
-            counts.externalSymbols[node.componentId]=1;
-        }
-        else{
-            counts.externalSymbols[node.componentId]++;
-        }
-        counts.layersReferencingExternalAnyStyles++;
-    }
-    else if (node.styles) {
-        var textGood = false;
-        var colorGood = false;
-        for (style in node.styles)
-        {
-            thisStyle = node.styles[style];
-            if (externalTextStyleIds.has(thisStyle)) {
-                textGood = true;
-                if (typeof counts.externalTextStyles[thisStyle] === "undefined") {
-                    counts.externalTextStyles[thisStyle]=1;
-                }
-                else {
-                    counts.externalTextStyles[thisStyle]++;
-                }
+        if (node.type == "INSTANCE" && externalSymbolIds.has(node.componentId)) {
+            counts.layersReferencingExternalSymbols++;
+            if (typeof counts.externalSymbols[node.componentId] === "undefined") {
+                counts.externalSymbols[node.componentId]=1;
             }
-            if (externalLayerStyleIds.has(thisStyle)) {
-                colorGood = true;
-                if (node.type != "TEXT") {
-                    textGood = true;
-                }
-                if (typeof counts.externalLayerStyles[thisStyle] === "undefined") {
-                    counts.externalLayerStyles[thisStyle]=1;
-                }
-                else {
-                    counts.externalLayerStyles[thisStyle]++;
-                }
-            }
-        }
-        if (textGood && colorGood)
-        {
-            if (node.type=="TEXT") {
-                counts.layersReferencingExternalTextStyles++;
-            }
-            else {
-                counts.layersReferencingExternalLayerStyles++;
+            else{
+                counts.externalSymbols[node.componentId]++;
             }
             counts.layersReferencingExternalAnyStyles++;
         }
+        else if (node.styles) {
+            var textGood = false;
+            var colorGood = false;
+            for (style in node.styles)
+            {
+                thisStyle = node.styles[style];
+                if (externalTextStyleIds.has(thisStyle)) {
+                    textGood = true;
+                    if (typeof counts.externalTextStyles[thisStyle] === "undefined") {
+                        counts.externalTextStyles[thisStyle]=1;
+                    }
+                    else {
+                        counts.externalTextStyles[thisStyle]++;
+                    }
+                }
+                if (externalLayerStyleIds.has(thisStyle)) {
+                    colorGood = true;
+                    if (node.type != "TEXT") {
+                        textGood = true;
+                    }
+                    if (typeof counts.externalLayerStyles[thisStyle] === "undefined") {
+                        counts.externalLayerStyles[thisStyle]=1;
+                    }
+                    else {
+                        counts.externalLayerStyles[thisStyle]++;
+                    }
+                }
+            }
+            if (textGood && colorGood)
+            {
+                if (node.type=="TEXT") {
+                    counts.layersReferencingExternalTextStyles++;
+                }
+                else {
+                    counts.layersReferencingExternalLayerStyles++;
+                }
+                counts.layersReferencingExternalAnyStyles++;
+            }
+        }
     }
-
     return counts;
 };
 
@@ -137,16 +138,8 @@ module.exports = async params => {
 
     pages.forEach(page => {
         if (page) {
-            const thisCounts = countLayers(page, counts);
-            counts.layers += thisCounts.layers;
-            counts.layersReferencingExternalSymbols += thisCounts.layersReferencingExternalSymbols;
-            counts.layersReferencingExternalLayerStyles += thisCounts.layersReferencingExternalLayerStyles;
-            counts.layersReferencingExternalTextStyles += thisCounts.layersReferencingExternalTextStyles;
-            counts.layersReferencingExternalAnyStyles += thisCounts.layersReferencingExternalAnyStyles;
-            counts.externalSymbols = {...counts.externalSymbols, ...thisCounts.externalSymbols};
-            counts.externalTextStyles = {...counts.externalTextStyles, ...thisCounts.externalTextStyles};
-            counts.externalLayerStyles = {...counts.externalLayerStyles, ...thisCounts.externalLayerStyles};
-            }
+            countLayers(page, counts);
+        }
     });
     const returnThis = {
         counts,
