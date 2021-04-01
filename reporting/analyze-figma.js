@@ -10,7 +10,7 @@ let externalLayerStyleIds;
 let externalStyleLinks;
 
 const countLayers = (node, counts) => {
-    if (node.children && node.type != "INSTANCE") { // Stop traversing the tree when we've got a component instance
+    if (node.children && node.type != "INSTANCE" && node.type != "BOOLEAN_OPERATION") { // Stop traversing the tree when we've got a component instance
         node.children.forEach((layerNode) => {
             countLayers(layerNode, counts);
         });
@@ -73,13 +73,21 @@ const countLayers = (node, counts) => {
 };
 
 module.exports = async params => {
+    let pages = [];
+    let brokenFile = false;
     const file = await figma.getFile(params.fileKey);
-    const pages = [...file.document.children];
-
-    externalSymbolIds = new Set(Object.keys(file.components).map((key) => file.components[key].key != "" ? key  : null )); // This doesn't work because components is an object, not an array.
-    externalTextStyleIds = new Set(Object.keys(file.styles).map((key) => file.styles[key].styleType == "TEXT" ? key : null ));
-    externalLayerStyleIds = new Set(Object.keys(file.styles).map((key) => file.styles[key].styleType != "TEXT" ? key : null ));
-    externalStyleLinks = {};
+    if (typeof(file.document) == "undefined"){
+        console.log("Broken file!");
+        console.log(file);
+        brokenFile = true;
+    }
+    if (!brokenFile){
+        pages = [...file.document.children];
+        externalSymbolIds = new Set(Object.keys(file.components).map((key) => file.components[key].key != "" ? key  : null )); // This doesn't work because components is an object, not an array.
+        externalTextStyleIds = new Set(Object.keys(file.styles).map((key) => file.styles[key].styleType == "TEXT" ? key : null ));
+        externalLayerStyleIds = new Set(Object.keys(file.styles).map((key) => file.styles[key].styleType != "TEXT" ? key : null ));
+        externalStyleLinks = {};
+    }
     const counts = {
         layers: 0,
         layersReferencingExternalSymbols: 0,
@@ -97,50 +105,22 @@ module.exports = async params => {
         layerStyles: {},
     }
 
-    //Create our external style links
-    for (style in file.styles) {
-        thisStyle = file.styles[style];
+    if(!brokenFile){
+        //Create our external style links
+        for (style in file.styles) {
+            thisStyle = file.styles[style];
 
-        if (thisStyle.key != "") {
-            externalStyleLinks[style] = thisStyle.key;
+            if (thisStyle.key != "") {
+                externalStyleLinks[style] = thisStyle.key;
+            }
         }
+
+        pages.forEach(page => {
+            if (page) {
+                countLayers(page, counts);
+            }
+        });
     }
-
-    // Map symbol data to our shareables object
-    /*
-    sketch.symbols.forEach(function(symbol) {
-        shareables.symbols[symbol.symbolID] = {
-            name: symbol.name,
-            id: symbol.symbolID,
-            sourceProject: params.projectName,
-            sourceFile: params.fileName,
-        }
-    });
-    // Map text style data to our shareables object
-    sketch.textStyles.forEach(function(style) {
-        shareables.textStyles[style.do_objectID] = {
-            name: style.name,
-            id: style.do_objectID,
-            sourceProject: params.projectName,
-            sourceFile: params.fileName,
-        }
-    });
-    // Map layer styles data to our shareables object
-    sketch.layerStyles.forEach(function(style) {
-        shareables.layerStyles[style.do_objectID] = {
-            name: style.name,
-            id: style.do_objectID,
-            sourceProject: params.projectName,
-            sourceFile: params.fileName,
-        }
-    });
-    */
-
-    pages.forEach(page => {
-        if (page) {
-            countLayers(page, counts);
-        }
-    });
     const returnThis = {
         counts,
         shareables,
